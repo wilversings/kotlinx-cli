@@ -8,3 +8,7 @@ package kotlinx.cli
 internal actual fun exitProcess(status: Int): Nothing {
     error("Not implemented for JS!")
 }
+
+internal actual fun eprintln(message: String) {
+    console.error(message)
+}

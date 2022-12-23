@@ -9,6 +9,8 @@ import kotlin.reflect.KProperty
 
 internal expect fun exitProcess(status: Int): Nothing
 
+internal expect fun eprintln(message: String)
+
 /**
  * Queue of arguments descriptors.
  * Arguments can have several values, so one descriptor can be returned several times.
@@ -103,7 +105,8 @@ open class ArgParser(
     var useDefaultHelpShortName: Boolean = true,
     var prefixStyle: OptionPrefixStyle = OptionPrefixStyle.LINUX,
     var skipExtraArguments: Boolean = false,
-    var strictSubcommandOptionsOrder: Boolean = false
+    var strictSubcommandOptionsOrder: Boolean = false,
+    var autoTerminate: Boolean = true
 ) {
 
     /**
@@ -176,9 +179,16 @@ open class ArgParser(
      */
     private var usedSubcommand: Subcommand? = null
 
-    internal var outputAndTerminate: (message: String, exitCode: Int) -> Nothing = { message, exitCode ->
-        println(message)
-        exitProcess(exitCode)
+    internal var outputAndTerminate: (message: String, exitCode: Int) -> Unit = { message, exitCode ->
+        if (exitCode != 0) {
+            eprintln(message)
+        }
+        else {
+            println(message)
+        }
+        if (autoTerminate) {
+            exitProcess(exitCode)
+        }
     }
 
     /**
@@ -352,7 +362,7 @@ open class ArgParser(
      *
      * @param message error message.
      */
-    private fun printError(message: String): Nothing {
+    private fun printError(message: String): Unit {
         outputAndTerminate("$message\n${makeUsage()}", 127)
     }
 

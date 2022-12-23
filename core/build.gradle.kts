@@ -4,7 +4,6 @@ plugins {
     kotlin("multiplatform")
 }
 
-
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions.allWarningsAsErrors = true
 }
@@ -81,3 +80,4 @@ kotlin {
         }
     }
 }
+

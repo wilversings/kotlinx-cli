@@ -9,3 +9,6 @@ internal actual fun exitProcess(status: Int): Nothing {
     kotlin.system.exitProcess(status)
 }
 
+internal actual fun eprintln(message: String) {
+    System.err.println(message)
+}

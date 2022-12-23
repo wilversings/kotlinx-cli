@@ -8,3 +8,14 @@ package kotlinx.cli
 internal actual fun exitProcess(status: Int): Nothing {
     kotlin.system.exitProcess(status)
 }
+
+internal actual fun eprintln(message: String) {
+    val lineBreak = when(Platform.osFamily) {
+        OsFamily.LINUX, OsFamily.ANDROID, OsFamily.WASM, OsFamily.UNKNOWN -> "\n"
+        OsFamily.IOS, OsFamily.MACOSX, OsFamily.TVOS, OsFamily.WATCHOS -> "\r"
+        OsFamily.WINDOWS -> "\r\n"
+    }
+    val stderr = platform.posix.fdopen(2, "w")
+    platform.posix.fprintf(stderr, "%s$lineBreak", message)
+    platform.posix.fflush(stderr)
+}

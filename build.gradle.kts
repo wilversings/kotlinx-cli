@@ -1,3 +1,6 @@
+val mavenUser: String by project
+val mavenPassword: String by project
+
 buildscript {
     repositories {
         mavenCentral()
@@ -10,6 +13,7 @@ buildscript {
 
 plugins {
     id("kotlinx.team.infra")
+    id("maven-publish")
 }
 
 infra {
@@ -26,5 +30,21 @@ infra {
 allprojects {
     repositories {
         mavenCentral()
+    }
+}
+
+println(mavenUser)
+
+allprojects {
+    publishing {
+        repositories {
+            maven(url = "https://maven.pkg.github.com/wilversings/kotlinx-cli") {
+                name = "GitHubPackages"
+                credentials {
+                    username = mavenUser
+                    password = mavenPassword
+                }
+            }
+        }
     }
 }
